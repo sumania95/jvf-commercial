@@ -1,0 +1,67 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<form method="POST" enctype="multipart/form-data" data-url="{% if is_Create %}{% url 'api_releasing_detail_form_item_save' %}{% endif %}" class="custom-form">
+  <div class="modal-header p-2 pb-2">
+    <h6 class="modal-title" >{{title}}</h6>
+    <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="modal-body p-2">
+    <div class="form-group">
+      <label for="">Part Number</label>
+      <label class="form-control text-primary">{{product.part_number}}</label>
+    </div>
+    <div class="form-group">
+      <label for="">Description</label>
+      <label class="form-control text-primary">{{product.description}}</label>
+    </div>
+    <input type="hidden" name="product_id" value="{{product.id}}">
+    <input type="hidden" name="releasing_id" value="{{releasing_id}}">
+    {{form|crispy}}
+    <button type="submit" class="btn btn-sm btn-{{btn_name}} btn-block">{{btn_title}}</button>
+  </div>
+</form>
+{% block 'script' %}
+<script>
+  $(document).ready(function () {
+    var csrftoken = getCookie('csrftoken');
+
+    $(".custom-form").submit(function (event) {
+      event.preventDefault();
+      var form = $(this);
+      $.ajax({
+        url: form.attr('data-url'),
+        data: form.serialize(),
+        type: form.attr('method'),
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        },
+        success: function(data){
+          Toast.fire({
+            type: data.message_type,
+            title: data.message_title
+          });
+          if (data.url){
+            window.location.href = data.url;
+          }
+          load_data_product(start_product,end_product);
+          load_data(start,end);
+          $('#another').modal('hide');
+        },
+        error:function(error){
+          Toast.fire({
+            type: 'error',
+            title: 'ERROR Connection Lost.'
+          });
+        },
+
+      })
+      return false;
+    });
+
+  });
+
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'product_active' %}active{% endblock %}
+
+{% block 'content' %}
+<div class="col-md-12">
+  <div class="card" id="form">
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block 'script' %}
+
+<script>
+  function form_load(){
+    $.ajax({
+      url: '{% url 'product_update_api' %}',
+      data: {'id':"{{product.id}}"},
+      type: 'get',
+      dataType: 'json',
+      success:function(data){
+        $('#form').html(data.html_form);
+      },
+    });
+
+  };
+  form_load();
+</script>
+
+{% endblock %}

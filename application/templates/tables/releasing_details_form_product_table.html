@@ -1,0 +1,35 @@
+{% load crispy_forms_tags %}
+{% for p in product %}
+<tr id="content">
+  <!-- <td>{{forloop.counter|add:start}}</td> -->
+  <td>{{p.part_number}} | {{p.description}}</td>
+  <td width="10%">
+    <button data-url="{% url 'api_releasing_detail_form_item' p.id %}" type="button" class="btn btn-success btn-sm form-show-another" name="button"><i class="feather icon-arrow-right mr-1"></i></button>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="12" class="text-center"><small>No data available</small></td>
+</tr>
+{% endfor %}
+
+{% block 'script' %}
+<script>
+  $(document).on('click', '.form-show-another', function(){
+    var btn = $(this);
+    $('#modal-show').modal('hide');
+    $.ajax({
+      url: btn.attr("data-url"),
+      type: 'get',
+      data: {releasing_id:'{{releasing_id}}'},
+      dataType:'json',
+      beforeSend: function(){
+        $('#another').modal('show');
+      },
+      success: function(data){
+        $('#another .modal-content').html(data.html_form);
+      }
+    });
+  });
+</script>
+{% endblock %}

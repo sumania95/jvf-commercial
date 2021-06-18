@@ -1,0 +1,65 @@
+{% load crispy_forms_tags %}
+{% load static %}
+{% block 'link' %}
+<link rel="stylesheet" href="{% static 'premium/assets/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'%}">
+<link rel="stylesheet" href="{% static 'premium/assets/select2/dist/css/select2.min.css'%}">
+<link rel="stylesheet" href="{% static 'premium/assets/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'%}">
+{% endblock %}
+<div class="card-body">
+  <form method="POST" enctype="multipart/form-data" data-url="{% if is_Create %}{% url 'transaction_create_api' %}{% else %}{% url 'transaction_update_save_api' transaction.id %}{% endif %}" class="custom-form">
+    {{form|crispy}}
+    <button type="submit" class="btn btn-sm btn-{{btn_name}}">{{btn_title}}</button>
+  </form>
+</div>
+{% block 'script' %}
+<script src="{% static 'premium/assets/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'%}"></script>
+<script src="{% static 'premium/assets/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'premium/assets/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'%}"></script>
+<script>
+  $('#id_customer').select2();
+  var $id_date = $('#id_date');
+  $id_date.datepicker({
+    autoclose: true,
+    format : 'yyyy-mm-dd',
+  });
+  $(document).ready(function () {
+    var csrftoken = getCookie('csrftoken');
+
+    $(".custom-form").submit(function (event) {
+      event.preventDefault();
+      var form = $(this);
+      $.ajax({
+        url: form.attr('data-url'),
+        data: form.serialize(),
+        type: form.attr('method'),
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        },
+        success: function(data){
+          Toast.fire({
+            type: data.message_type,
+            title: data.message_title
+          });
+          if (data.url){
+            window.location.href = data.url;
+          }
+          form_load();
+        },
+        error:function(error){
+          Toast.fire({
+            type: 'error',
+            title: 'ERROR Connection Lost.'
+          });
+        },
+
+      })
+      return false;
+    });
+
+  });
+
+</script>
+{% endblock %}

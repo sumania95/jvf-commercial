@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'releasing_active' %}active{% endblock %}
+{% block 'content' %}
+
+<div class="col-md-12">
+  <div class="card p-0 mb-2">
+    <div class="card-header m-0 p-2">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="">Control Number <span class="ml-2 text-primary">({{object.date_created}})</span></label>
+            <label class="form-control form-control-sm text-primary">{{object.control_no}}</label>
+          </div>
+          <!-- <div class="form-group">
+            <label for="">Shipped Via</label>
+            <label class="form-control form-control-sm text-primary">{{object.shipped_via}}</label>
+          </div>
+          <div class="form-group">
+            <label for="">Remarks</label>
+            <label class="form-control form-control-sm text-primary">{{object.remarks}}</label>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card p-0">
+    <div class="card-header btn-page m-0 p-2 pb-0">
+      <div class="row">
+        <div class="col-md-12">
+          <label>Filter</label>
+          <table>
+            <tr>
+              <td>
+                <input type="search" class="form-control float-right" placeholder="Search...." name="search" id="search">
+              </td>
+            </tr>
+          </table>
+          <hr class="m-2">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 pb-0 btn-page">
+          <button data-url="{% url 'api_releasing_detail_form' %}" type="button" class="btn btn-primary btn-sm form-show" name="button"><i class="feather icon-plus-circle mr-1"></i>New</button>
+          <a href="{% url 'releasing_report_pdf' object.id %}" target="_blank" type="button" class="btn btn-secondary btn-sm" name="button"><i class="feather icon-printer mr-1"></i>Receiving Report</a>
+
+        </div>
+        <div class="col-md-6 text-right">
+          <label id="counter"></label>
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-2">
+      <div class="table-responsive">
+        <table class="table border-bottom table-hover">
+          <thead>
+            <tr>
+              <th width="1%">#</th>
+              <th>Part Number</th>
+              <th>Description</th>
+              <th width="10%">Quantity</th>
+              <th width="10%">Action</th>
+            </tr>
+          </thead>
+          <tbody id="data_table">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-center">
+      <ul class="pagination">
+        <li class="page-item" id="page_prev"><button class="page-link" id="button_prev" href="#!">Prev</button></li>
+        <li class="page-item" id="page_next"><button class="page-link" id="button_next" href="#!">Next</button></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block 'modal' %}
+<div class="modal fade" id="modal-show" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content"></div>
+  </div>
+</div>
+<div class="modal fade" id="another" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block 'script' %}
+<script>
+  $(document).on('click', '.form-show', function(){
+    var btn = $(this);
+    $.ajax({
+      url: btn.attr("data-url"),
+      type: 'get',
+      data: {releasing_id:'{{object.id}}'},
+      dataType:'json',
+      beforeSend: function(){
+        $('#modal-show').modal('show');
+      },
+      success: function(data){
+        $('#modal-show .modal-content').html(data.html_form);
+      }
+    });
+  });
+</script>
+
+<script>
+  $(document).on('click', '.confirm-added', function(){
+    return confirm('Are you sure you want to add this?');
+  });
+  $(document).on('click', '.confirm-removed', function(){
+    return confirm('Are you sure you want to remove this?');
+  });
+  var start = 0;
+  var end = 10;
+  var counts;
+  function disabled(){
+    if (start === 0){
+      $("#page_prev").addClass("disabled", true);
+    }else{
+      $("#page_prev").removeClass("disabled", false);
+    }
+    if (end >= counts){
+      $("#page_next").addClass("disabled", true);
+    }else{
+      $("#page_next").removeClass("disabled", false);
+    }
+  }
+  function load_data(start,end){
+    var search = $("#search").val();
+    $.ajax({
+      url: '{% url 'api_releasing_detail' object.id %}',
+      type: 'get',
+      data: {start:start,end:end,search:search},
+      dataType: 'json',
+      success:function(data){
+        counts = data.counter;
+        $('#counter').html(data.counter + " record(s) found");
+        $('#data_table').html(data.data);
+        disabled();
+      },
+    });
+  };
+  $('#button_prev').click(function() {
+    start-=10
+    end-=10
+    load_data(start,end);
+  });
+  $('#button_next').click(function() {
+    start+=10
+    end+=10
+    load_data(start,end);
+  });
+  $('#search').change(function() {
+    start = 0;
+    end = 10;
+    load_data(start,end);
+    console.log('{{object.id}}')
+  });
+  $('#barangay').change(function() {
+    start = 0;
+    end = 10;
+    load_data(start,end);
+  });
+  load_data(start,end);
+</script>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% load humanize %}
+{% for p in product %}
+<tr>
+  <td>{{forloop.counter|add:start}}</td>
+  <td style="white-space:normal;">
+    <b>{{p.description|upper}}</b><br>
+    {{p.part_number|upper}}
+  </td>
+  <td style="white-space:normal;">{{p.brand|upper}}</td>
+  <td style="white-space:normal;">{{p.branch|upper}}</td>
+  <td style="white-space:normal;">{{p.quantity}}</td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="12" class="text-center">No data available</td>
+</tr>
+{% endfor %}
+{% block 'script' %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("a").tooltip({container:'table'});
+  });
+</script>
+{% endblock %}

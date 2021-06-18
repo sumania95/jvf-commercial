@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'content' %}
+<div class="col-12" id="dashboard_content">
+  {% if status %}
+  <div class="alert alert-danger" role="alert">
+      {{counter}} profile unreading record(s)
+  </div>
+  {% endif %}
+  <div class="row">
+    <!-- order-card start -->
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-blue order-card">
+        <div class="card-body p-2">
+          <h6 class="text-white">Products</h6>
+          <h3 class="text-right text-white"><i class="feather icon-shopping-cart float-left"></i><span>{{product_total}}</span></h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-green order-card">
+        <div class="card-body p-2">
+          <h6 class="text-white">Receiving</h6>
+          <h3 class="text-right text-white"><i class="feather icon-clipboard float-left"></i><span>{{receiving_total}}</span></h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-yellow order-card">
+        <div class="card-body p-2">
+          <h6 class="text-white">Releasing</h6>
+          <h3 class="text-right text-white"><i class="feather icon-clipboard float-left"></i><span>{{releasing_total}}</span></h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card bg-c-red order-card">
+        <div class="card-body p-2">
+          <h6 class="text-white">Customer</h6>
+          <h3 class="text-right text-white"><i class="feather icon-users float-left"></i><span>{{customer_total}}</span></h3>
+        </div>
+      </div>
+    </div>
+    <!-- order-card end -->
+  </div>
+  <div class="row">
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Pie Charts</h5>
+            </div>
+            <div class="card-body">
+                <div id="pie-chart-1" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Pie Charts donut</h5>
+            </div>
+            <div class="card-body">
+                <div id="pie-chart-2" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block 'script' %}
+<script>
+  <script src="{% static 'premium/assets/js/plugins/apexcharts.min.js'%}"></script>
+  <script src="{% static 'premium/assets/js/pages/chart-apex.js'%}"></script>
+</script>
+{% endblock %}
