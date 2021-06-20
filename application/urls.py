@@ -14,7 +14,7 @@ urlpatterns = [
     path('releasing/', include('application.page_releasing.urls')),
     path('transaction/', include('application.page_transaction.urls')),
     path('full-search/', include('application.page_full_search.urls')),
+    path('summary-report/', include('application.page_summary_report.urls')),
     # path('brand/', include('application.page_brand.urls')),
-    # path('category/', include('application.page_category.urls')),
     # path('unit/', include('application.page_unit.urls')),
 ]

@@ -201,8 +201,8 @@ class Receiving_Details_Form_Product_Table_AJAXView(LoginRequiredMixin,View):
             receiving_id = None
         if search or start or end:
             data['form_is_valid'] = True
-            data['counter'] = self.queryset.exclude(id__in = Receiving_Detail.objects.values('product_id').filter(receiving_id = receiving_id)).filter(Q(description__icontains = search)|Q(part_number__icontains = search)).count()
-            product = self.queryset.exclude(id__in = Receiving_Detail.objects.values('product_id').filter(receiving_id = receiving_id)).filter(Q(description__icontains = search)|Q(part_number__icontains = search)).order_by('description','part_number')[int(start):int(end)]
+            data['counter'] = self.queryset.exclude(id__in = Receiving_Detail.objects.values('product_id').filter(receiving_id = receiving_id)).filter(Q(description__icontains = search)|Q(part_number__icontains = search),branch=self.request.user.user_type.branch).count()
+            product = self.queryset.exclude(id__in = Receiving_Detail.objects.values('product_id').filter(receiving_id = receiving_id)).filter(Q(description__icontains = search)|Q(part_number__icontains = search),branch=self.request.user.user_type.branch).order_by('description','part_number')[int(start):int(end)]
             data['data'] = render_to_string(self.template_name,{'product':product,'start':start,'receiving_id':receiving_id})
         return JsonResponse(data)
 

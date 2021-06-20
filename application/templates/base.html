@@ -70,13 +70,10 @@
             <a href="{% url 'transaction' %}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Transaction</span></a>
           </li>
           <li class="nav-item pcoded-menu-caption">
-            <label>Others</label>
+            <label>Reporting</label>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">My Account</span></a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'logout' %}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-log-out text-danger"></i></span><span class="pcoded-mtext">Sign Out</span></a>
+            <a href="{% url 'summary_report' %}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Summary Reports</span></a>
           </li>
         </ul>
       </div>
@@ -93,6 +90,11 @@
       </a>
     </div>
     <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          DEVELOPMENT STAGE
+        </li>
+      </ul>
       <ul class="navbar-nav ml-auto">
         <li>
           <div class="dropdown drp-user">
@@ -105,9 +107,10 @@
   							<span>{{user.first_name}} {{user.last_name}}</span>
   						</div>
   						<ul class="pro-body">
-  							<!-- <li><a href="#" class="dropdown-item"><i class="feather icon-user"></i>My Profile</a></li>
-                <li><a href="#" class="dropdown-item"><i class="feather icon-activity"></i>Transaction Logs</a></li> -->
-  							<li><a href="#" class="dropdown-item"><i class="feather icon-lock"></i>Change Password</a></li>
+  							<li><a href="#" class="dropdown-item"><i class="feather icon-user"></i>My Account</a></li>
+                <li><a href="#" class="dropdown-item"><i class="feather icon-lock"></i>Change Password</a></li>
+  							<li><a href="https://web.facebook.com/sumania95/" target="_blank" class="dropdown-item"><i class="feather icon-phone"></i>Need Help?</a></li>
+                <li><a href="{% url 'logout' %}" class="dropdown-item"><i class="feather icon-log-out"></i>Logout</a></li>
   						</ul>
   					</div>
           </div>

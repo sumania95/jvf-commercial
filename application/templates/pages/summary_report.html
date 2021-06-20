@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'link' %}
+<link rel="stylesheet" href="{% static 'premium/assets/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'%}">
+{% endblock %}
+{% block 'content' %}
+<div class="col-md-12">
+  <div class="alert alert-warning" role="alert">
+    ADMINISTRATOR ONLY <br>
+    Note : you can now view the summary report per product/parts to all branches!
+  </div>
+</div>
+<div class="col-md-12">
+  <div class="card p-0">
+    <div class="card-body">
+			<ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link text-uppercase active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="false">Receiving/ Stock IN</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Releasing/ Stock OUT</a>
+				</li>
+			</ul>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <label>Date Filter (From - To)</label>
+              <table>
+                <tr>
+                  <td>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="far fa-calendar-alt"></i>
+                        </span>
+                      </div>
+                      <input type="text" class="form-control pull-right" id="datepicker1">
+                    </div>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="far fa-calendar-alt"></i>
+                        </span>
+                      </div>
+                      <input type="text" class="form-control pull-right" id="datepicker2">
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <hr class="m-2">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <label id="counter"></label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table border table-hover">
+                  <thead>
+                    <tr>
+                      <th width="1%">#</th>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th width="20%">Category</th>
+                      <th width="10%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="data_table">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="pagination">
+                <li class="page-item" id="page_prev"><button class="page-link" id="button_prev" href="#!">Prev</button></li>
+                <li class="page-item" id="page_next"><button class="page-link" id="button_next" href="#!">Next</button></li>
+              </ul>
+            </div>
+          </div>
+				</div>
+				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <label>Date Filter (From - To)</label>
+              <table>
+                <tr>
+                  <td>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="far fa-calendar-alt"></i>
+                        </span>
+                      </div>
+                      <input type="text" class="form-control pull-right" id="datepicker1">
+                    </div>
+                  </td>
+                  <td>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="far fa-calendar-alt"></i>
+                        </span>
+                      </div>
+                      <input type="text" class="form-control pull-right" id="datepicker2">
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <hr class="m-2">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <label id="counter"></label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table border table-hover">
+                  <thead>
+                    <tr>
+                      <th width="1%">#</th>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th width="20%">Category</th>
+                      <th width="10%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="data_table">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="pagination">
+                <li class="page-item" id="page_prev"><button class="page-link" id="button_prev" href="#!">Prev</button></li>
+                <li class="page-item" id="page_next"><button class="page-link" id="button_next" href="#!">Next</button></li>
+              </ul>
+            </div>
+          </div>
+				</div>
+			</div>
+		</div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block 'script' %}
+<script src="{% static 'premium/assets/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'%}"></script>
+
+<script>
+  var $datepicker1 = $('#datepicker1');
+  $datepicker1.datepicker({
+    autoclose: true,
+    format : 'yyyy-mm-dd',
+  });
+  $datepicker1.datepicker('setDate', new Date());
+
+  var $datepicker2 = $('#datepicker2');
+  $datepicker2.datepicker({
+    autoclose: true,
+    format : 'yyyy-mm-dd',
+  });
+  $datepicker2.datepicker('setDate', new Date());
+
+
+  var start = 0;
+  var end = 10;
+  var counts;
+  function disabled(){
+    if (start === 0){
+      $("#page_prev").addClass("disabled", true);
+    }else{
+      $("#page_prev").removeClass("disabled", false);
+    }
+    if (end >= counts){
+      $("#page_next").addClass("disabled", true);
+    }else{
+      $("#page_next").removeClass("disabled", false);
+    }
+  }
+  function load_data(start,end){
+    var search = $("#search").val();
+    $.ajax({
+      url: '{% url 'customer_table_api' %}',
+      type: 'get',
+      data: {start:start,end:end,search:search},
+      dataType: 'json',
+      success:function(data){
+        counts = data.counter;
+        $('#counter').html(data.counter + " record(s)");
+        $('#data_table').html(data.data);
+        disabled();
+      },
+    });
+  };
+  $('#button_prev').click(function() {
+    start-=10
+    end-=10
+    load_data(start,end);
+  });
+  $('#button_next').click(function() {
+    start+=10
+    end+=10
+    load_data(start,end);
+  });
+  $('#search').change(function() {
+    start = 0;
+    end = 10;
+    load_data(start,end);
+  });
+  load_data(start,end);
+</script>
+
+{% endblock %}
