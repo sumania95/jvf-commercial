@@ -92,7 +92,7 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          DEVELOPMENT STAGE
+          DEVELOPMENT STAGE {% if check_balance %}| {{check_balance}}{% endif %}
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
@@ -109,7 +109,7 @@
   						<ul class="pro-body">
   							<li><a href="#" class="dropdown-item"><i class="feather icon-user"></i>My Account</a></li>
                 <li><a href="#" class="dropdown-item"><i class="feather icon-lock"></i>Change Password</a></li>
-  							<li><a href="https://web.facebook.com/sumania95/" target="_blank" class="dropdown-item"><i class="feather icon-phone"></i>Need Help?</a></li>
+  							<li><a href="https://www.buymeacoffee.com/sumania95" target="_blank" class="dropdown-item"><i class="feather icon-phone"></i>Buy Me a Coffee</a></li>
                 <li><a href="{% url 'logout' %}" class="dropdown-item"><i class="feather icon-log-out"></i>Logout</a></li>
   						</ul>
   					</div>

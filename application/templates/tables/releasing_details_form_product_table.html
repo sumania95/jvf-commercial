@@ -2,7 +2,11 @@
 {% for p in product %}
 <tr id="content">
   <!-- <td>{{forloop.counter|add:start}}</td> -->
-  <td>{{p.part_number}} | {{p.description}}</td>
+  <td>
+    <b>{{p.description}}</b><br>
+    {{p.part_number}}
+  </td>
+  <td width="20%">{{p.quantity}}</td>
   <td width="10%">
     <button data-url="{% url 'api_releasing_detail_form_item' p.id %}" type="button" class="btn btn-success btn-sm form-show-another" name="button"><i class="feather icon-arrow-right mr-1"></i></button>
   </td>

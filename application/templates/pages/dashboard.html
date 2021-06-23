@@ -3,9 +3,13 @@
 
 {% block 'content' %}
 <div class="col-12" id="dashboard_content">
-  {% if status %}
-  <div class="alert alert-danger" role="alert">
-      {{counter}} profile unreading record(s)
+  {% if check_balance == 0 %}
+  <div class="alert alert-success" role="alert">
+      All Services Normal
+  </div>
+  {% else %}
+  <div class="alert alert-warning" role="alert">
+      Warning: Please contact your administrator.
   </div>
   {% endif %}
   <div class="row">
