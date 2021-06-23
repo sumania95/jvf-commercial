@@ -92,7 +92,7 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          DEVELOPMENT STAGE {% if check_balance %}| {{check_balance}}{% endif %}
+          DEVELOPMENT STAGE | {{user.user_type.branch|upper}} BRANCH
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">

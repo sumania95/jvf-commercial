@@ -149,15 +149,35 @@ class Product_Table_AJAXView(LoginRequiredMixin,View):
 import csv
 from django.http import HttpResponse
 
+# ('1', 'JPY',),
+# ('2', 'USD',),
+# ('3', 'PHP',),
+# ('4', 'EUR',),
+
+def currency(value):
+    if value == '1':
+        currency = "JPY"
+        return currency
+    elif value == '2':
+        currency = "USD"
+        return currency
+    elif value == '3':
+        currency = "PHP"
+        return currency
+    elif value == '4':
+        currency = "EUR"
+        return currency
+
 class Product_Export_Excel_AJAXView(LoginRequiredMixin,View):
     def get(self, request):
-        products = Product.objects.filter(branch=self.request.user.user_type.branch).values_list('part_number', 'description', 'brand__brand','location','quantity', 'unit_price').order_by('brand__brand','description','part_number')
+        # products = Product.objects.filter(branch=self.request.user.user_type.branch).values_list('part_number', 'description', 'brand__brand','location','quantity', 'unit_price').order_by('brand__brand','description','part_number')
+        products = Product.objects.filter(branch=self.request.user.user_type.branch).order_by('brand__brand','description','part_number')
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="programs.csv"'
+        response['Content-Disposition'] = 'attachment; filename="masterlist.csv"'
         writer = csv.writer(response)
-        writer.writerow(['PART NUMBER', 'DESCRIPTION', 'BRAND','LOCATION' ,'STOCKS','PRICE (JPY/USD)'])
+        writer.writerow(['PART NUMBER', 'DESCRIPTION', 'BRAND','LOCATION' ,'STOCKS','PRICE'])
         for product in products:
-            writer.writerow(product)
+            writer.writerow([product.part_number,product.description,product.brand.brand,product.location,product.quantity,currency(product.currency) + ' ' + str(product.unit_price)])
         return response
 
 from application.render import (
@@ -177,3 +197,4 @@ class Product_PDF_Print(LoginRequiredMixin,View):
         }
         pdf = Render.render('reports/product_PDF_print.html', params)
         return pdf
+        # return render(request,'reports/product_PDF_print.html', params)
