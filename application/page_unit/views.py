@@ -76,6 +76,10 @@ class Unit_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_type'] = success
                 data['message_title'] = 'Successfully saved.'
                 data['url'] = reverse('unit')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Unit_Update(LoginRequiredMixin,TemplateView):
@@ -119,9 +123,14 @@ class Unit_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = UnitForm(request.POST,request.FILES,instance=unit)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('unit')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
 
         return JsonResponse(data)
 

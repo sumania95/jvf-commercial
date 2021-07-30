@@ -82,6 +82,10 @@ class Releasing_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_title'] = 'Successfully saved.'
                 print(form.instance.id)
                 data['url'] = reverse('releasing_detail',kwargs={'pk': stock.id})
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Releasing_Update(LoginRequiredMixin,TemplateView):
@@ -125,9 +129,14 @@ class Releasing_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = ReleasingForm(request.POST,request.FILES,instance=releasing)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('releasing')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
 
         return JsonResponse(data)
 
@@ -241,12 +250,18 @@ class Releasing_Details_Form_Item_Save_AJAXView(LoginRequiredMixin,View):
         if request.method == 'POST':
             form = Releasing_DetailForm(request.POST,request.FILES)
             if form.is_valid():
-                form.instance.product_id = product_id
-                form.instance.releasing_id = releasing_id
-                product_form = form.save()
-                Product.objects.filter(id=product_id).update(quantity=F('quantity')-(product_form.quantity))
-                data['message_type'] = success
-                data['message_title'] = 'Successfully updated.'
+                if int(form.instance.quantity) < 1:
+                    data['valid'] = False
+                    data['message_type'] = error
+                    data['message_title'] = 'Below 1 is not allowed.'
+                else:
+                    form.instance.product_id = product_id
+                    form.instance.releasing_id = releasing_id
+                    Product.objects.filter(id=product_id).update(quantity=F('quantity')-int(form.instance.quantity))
+                    form.save()
+                    data['valid'] = True
+                    data['message_type'] = success
+                    data['message_title'] = 'Successfully updated.'
         return JsonResponse(data)
 
 class Releasing_Details_Form_Item_Delete_Save_AJAXView(LoginRequiredMixin,View):
@@ -254,7 +269,7 @@ class Releasing_Details_Form_Item_Delete_Save_AJAXView(LoginRequiredMixin,View):
         data =  dict()
         releasing_detail = Releasing_Detail.objects.get(id=pk)
         if request.method == 'POST':
-            Product.objects.filter(id=releasing_detail.product_id).update(quantity=F('quantity')+(releasing_detail.quantity))
+            Product.objects.filter(id=releasing_detail.product_id).update(quantity=F('quantity')+int(releasing_detail.quantity))
             Releasing_Detail.objects.get(id=releasing_detail.id).delete()
             data['message_type'] = success
             data['message_title'] = 'Successfully removed.'

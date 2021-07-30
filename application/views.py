@@ -21,6 +21,7 @@ from .models import (
     Product,
     Customer,
     Receiving,
+    Receiving_Detail,
     Releasing,
 )
 
@@ -32,6 +33,20 @@ class Home(LoginRequiredMixin,TemplateView):
         product = Product.objects.filter(branch=self.request.user.user_type.branch).aggregate(quantity=Coalesce(Sum('quantity'),0))['quantity']
         receiving = Receiving.objects.filter(branch=self.request.user.user_type.branch).aggregate(quantity=Coalesce(Sum('receiving_detail__quantity'),0))['quantity']
         releasing = Releasing.objects.filter(branch=self.request.user.user_type.branch).aggregate(quantity=Coalesce(Sum('releasing_detail__quantity'),0))['quantity']
+
+        product_sum = Product.objects.filter(branch=self.request.user.user_type.branch).aggregate(Sum('quantity'))
+
+        receiving_sum = Receiving.objects.filter(branch=self.request.user.user_type.branch).aggregate(Sum('receiving_detail__quantity'))
+        print(product_sum)
+        print(receiving_sum)
+        # product_decrease = Product.objects.filter(quantity__lt=0).all()
+        # for p in product_decrease:
+        #     print(p.description + " - " + p.part_number)
+        print(releasing)
+        print(product)
+        print(receiving)
+        total = int(product)+int(releasing)-int(receiving)
+        print(total)
         context['check_balance'] = int(product)+int(releasing)-int(receiving)
         context['product_quantity_total'] = Product.objects.filter(branch=self.request.user.user_type.branch).aggregate(quantity=Coalesce(Sum('quantity'),0))
         context['product_total'] = Product.objects.filter(branch=self.request.user.user_type.branch).count()

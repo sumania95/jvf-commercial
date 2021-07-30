@@ -31,6 +31,7 @@ from .forms import (
 from application.render import (
     Render
 )
+from django.db import transaction
 from django.utils import timezone
 success = 'success'
 info = 'info'
@@ -68,6 +69,8 @@ class Receiving_Create_AJAXView(LoginRequiredMixin,View):
         }
         data['html_form'] = render_to_string(self.template_name,context)
         return JsonResponse(data)
+
+    @transaction.atomic
     def post(self, request):
         data =  dict()
         if request.method == 'POST':
@@ -81,6 +84,10 @@ class Receiving_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_title'] = 'Successfully saved.'
                 print(form.instance.id)
                 data['url'] = reverse('receiving_detail',kwargs={'pk': stock.id})
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Receiving_Update(LoginRequiredMixin,TemplateView):
@@ -117,6 +124,7 @@ class Receiving_Update_AJAXView(LoginRequiredMixin,View):
         return JsonResponse(data)
 
 class Receiving_Update_Save_AJAXView(LoginRequiredMixin,View):
+    @transaction.atomic
     def post(self, request,pk):
         data = dict()
         receiving = Receiving.objects.get(pk=pk)
@@ -124,9 +132,14 @@ class Receiving_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = ReceivingForm(request.POST,request.FILES,instance=receiving)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('receiving')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
 
         return JsonResponse(data)
 
@@ -229,6 +242,7 @@ class Receiving_Details_Form_Item_AJAXView(LoginRequiredMixin,View):
         return JsonResponse(data)
 
 class Receiving_Details_Form_Item_Save_AJAXView(LoginRequiredMixin,View):
+    @transaction.atomic
     def post(self, request):
         data = dict()
         try:
@@ -240,20 +254,27 @@ class Receiving_Details_Form_Item_Save_AJAXView(LoginRequiredMixin,View):
         if request.method == 'POST':
             form = Receiving_DetailForm(request.POST,request.FILES)
             if form.is_valid():
-                form.instance.product_id = product_id
-                form.instance.receiving_id = receiving_id
-                product_form = form.save()
-                Product.objects.filter(id=product_id).update(quantity=F('quantity')+(product_form.quantity))
-                data['message_type'] = success
-                data['message_title'] = 'Successfully updated.'
+                if (form.instance.quantity) < 1:
+                    data['valid'] = False
+                    data['message_type'] = error
+                    data['message_title'] = 'Below 1 is not allowed.'
+                else:
+                    form.instance.product_id = product_id
+                    form.instance.receiving_id = receiving_id
+                    Product.objects.filter(id=product_id).update(quantity=F('quantity')+int(form.instance.quantity))
+                    product_form = form.save()
+                    data['valid'] = True
+                    data['message_type'] = success
+                    data['message_title'] = 'Successfully updated.'
         return JsonResponse(data)
 
 class Receiving_Details_Form_Item_Delete_Save_AJAXView(LoginRequiredMixin,View):
+    @transaction.atomic
     def post(self, request,pk):
         data =  dict()
         receiving_detail = Receiving_Detail.objects.get(id=pk)
         if request.method == 'POST':
-            Product.objects.filter(id=receiving_detail.product_id).update(quantity=F('quantity')-(receiving_detail.quantity))
+            Product.objects.filter(id=receiving_detail.product_id).update(quantity=F('quantity')-int(receiving_detail.quantity))
             Receiving_Detail.objects.get(id=receiving_detail.id).delete()
             data['message_type'] = success
             data['message_title'] = 'Successfully removed.'
@@ -275,7 +296,7 @@ class Receiving_Details_Table_AJAXView(LoginRequiredMixin,View):
         if search or start or end:
             data['form_is_valid'] = True
             data['counter'] = self.queryset.filter(Q(product__description__icontains = search),receiving__id=pk).count()
-            receiving = self.queryset.filter(Q(product__description__icontains = search),receiving__id=pk).order_by('date_created')[int(start):int(end)]
+            receiving = self.queryset.filter(Q(product__description__icontains = search),receiving__id=pk).order_by('product__description','product__part_number')[int(start):int(end)]
             data['data'] = render_to_string(self.template_name,{'receiving':receiving,'start':start})
         return JsonResponse(data)
 
@@ -287,7 +308,7 @@ class Receiving_Detail_PDF_Print(LoginRequiredMixin,View):
     queryset = Receiving_Detail.objects.all()
     def get(self, request,pk):
         receiving = Receiving.objects.get(id=pk)
-        receiving_detail = self.queryset.filter(receiving=receiving)
+        receiving_detail = self.queryset.filter(receiving=receiving).order_by('product__description','product__part_number')
         now = timezone.now()
         user = User_Type.objects.filter(branch=self.request.user.user_type.branch).first()
         params = {

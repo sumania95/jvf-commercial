@@ -117,6 +117,12 @@ class Product(models.Model):
     date_updated            = models.DateTimeField(auto_now = True)
     date_created            = models.DateTimeField(auto_now_add = True)
 
+    def __str__(self):
+        return str(self.description + " - " + self.part_number)
+
+    class Meta:
+        ordering = ['description','part_number']
+
 class Receiving(models.Model):
     id                      = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     control_no              = models.CharField(default="0000",max_length = 200)

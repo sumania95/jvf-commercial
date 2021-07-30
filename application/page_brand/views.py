@@ -75,6 +75,10 @@ class Brand_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_type'] = success
                 data['message_title'] = 'Successfully saved.'
                 data['url'] = reverse('brand')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Brand_Update(LoginRequiredMixin,TemplateView):
@@ -118,9 +122,14 @@ class Brand_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = BrandForm(request.POST,request.FILES,instance=brand)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('brand')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
 
         return JsonResponse(data)
 

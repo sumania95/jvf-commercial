@@ -77,6 +77,10 @@ class Product_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_type'] = success
                 data['message_title'] = 'Successfully saved.'
                 data['url'] = reverse('product')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Product_Update(LoginRequiredMixin,TemplateView):
@@ -120,10 +124,14 @@ class Product_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = ProductForm(request.POST,request.FILES,instance=product)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('product')
-
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Product_Table_AJAXView(LoginRequiredMixin,View):

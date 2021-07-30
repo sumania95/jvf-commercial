@@ -77,6 +77,10 @@ class Customer_Create_AJAXView(LoginRequiredMixin,View):
                 data['message_type'] = success
                 data['message_title'] = 'Successfully saved.'
                 data['url'] = reverse('customer')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
         return JsonResponse(data)
 
 class Customer_Update(LoginRequiredMixin,TemplateView):
@@ -120,9 +124,14 @@ class Customer_Update_Save_AJAXView(LoginRequiredMixin,View):
             form = CustomerForm(request.POST,request.FILES,instance=customer)
             if form.is_valid():
                 form.save()
+                data['valid'] = True
                 data['message_type'] = success
                 data['message_title'] = 'Successfully updated.'
                 data['url'] = reverse('customer')
+            else:
+                data['valid'] = False
+                data['message_type'] = error
+                data['message_title'] = 'Error connection found.'
 
         return JsonResponse(data)
 
